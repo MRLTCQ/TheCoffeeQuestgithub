@@ -1,5 +1,5 @@
 # blanket_order.py
-from odoo import models, fields
+from odoo import models, fields, api
 
 class BlanketOrder(models.Model):
     _name = 'blanket.order'
