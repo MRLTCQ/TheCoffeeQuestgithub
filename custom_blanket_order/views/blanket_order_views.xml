@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menuitem id="menu_blanket_order_root"
+          name="Blanket Orders"
+          parent="sale.sale_order_menu"
+          sequence="10" />
+
+<record id="action_blanket_orders" model="ir.actions.act_window">
+    <field name="name">Blanket Orders</field>
+    <field name="res_model">blanket.order</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="menu_blanket_orders"
+          name="Manage Blanket Orders"
+          parent="menu_blanket_order_root"
+          action="action_blanket_orders"
+          sequence="1"/>
