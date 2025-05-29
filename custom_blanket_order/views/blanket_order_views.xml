@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- List view for Blanket Orders -->
-    <record id="view_blanket_order_list" model="ir.ui.view">
-        <field name="name">blanket.order.list</field>
-        <field name="model">blanket.order</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="date_start"/>
-                <field name="date_end"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Form view for Blanket Orders -->
+    <!-- Form View for Blanket Order -->
     <record id="view_blanket_order_form" model="ir.ui.view">
         <field name="name">blanket.order.form</field>
         <field name="model">blanket.order</field>
@@ -27,8 +13,46 @@
                         <field name="date_start"/>
                         <field name="date_end"/>
                     </group>
+                    <notebook>
+                        <page string="Order Lines">
+                            <field name="order_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="description"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="price_subtotal" readonly="1"/>
+                                    <field name="price_tax" readonly="1"/>
+                                    <field name="price_total" readonly="1"/>
+                                    <field name="delivered_qty" readonly="1"/>
+                                    <field name="invoiced_qty" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group string="Total">
+                        <field name="amount_untaxed" readonly="1"/>
+                        <field name="amount_tax" readonly="1"/>
+                        <field name="amount_total" readonly="1"/>
+                    </group>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <!-- List View for Blanket Order -->
+    <record id="view_blanket_order_list" model="ir.ui.view">
+        <field name="name">blanket.order.list</field>
+        <field name="model">blanket.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="amount_total"/>
+            </list>
         </field>
     </record>
 </odoo>
