@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <menuitem id="menu_blanket_order_root"
-              name="Blanket Orders"
-              parent="sale.sale_order_menu"
-              sequence="10" />
-
-    <record id="action_blanket_orders" model="ir.actions.act_window">
-        <field name="name">Blanket Orders</field>
-        <field name="res_model">blanket.order</field>
-        <field name="view_mode">tree,form</field>
+    <!-- List view for Blanket Orders -->
+    <record id="view_blanket_order_list" model="ir.ui.view">
+        <field name="name">blanket.order.list</field>
+        <field name="model">blanket.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+            </list>
+        </field>
     </record>
 
-    <menuitem id="menu_blanket_orders"
-              name="Manage Blanket Orders"
-              parent="menu_blanket_order_root"
-              action="action_blanket_orders"
-              sequence="1"/>
+    <!-- Form view for Blanket Orders -->
+    <record id="view_blanket_order_form" model="ir.ui.view">
+        <field name="name">blanket.order.form</field>
+        <field name="model">blanket.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 </odoo>
