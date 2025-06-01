@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Action to open list+form view -->
+    <record id="action_blanket_order" model="ir.actions.act_window">
+        <field name="name">Blanket Orders</field>
+        <field name="res_model">blanket.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Blanket Order
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Sales > Orders -->
+    <menuitem id="menu_blanket_order"
+              name="Blanket Orders"
+              parent="sale.sale_order_menu"
+              action="action_blanket_order"
+              sequence="20"/>
+</odoo>
