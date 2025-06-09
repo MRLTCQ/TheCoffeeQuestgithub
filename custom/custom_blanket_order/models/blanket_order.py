@@ -1,13 +1,16 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class BlanketOrder(models.Model):
     _name = 'blanket.order'
     _description = 'Blanket Order'
 
-    name = fields.Char(string='Reference', required=True, default='New')
+    name = fields.Char(string='Reference', required=True, default='New', readonly=True, copy=False)
     partner_id = fields.Many2one('res.partner', string='Customer', required=True)
-    date_start = fields.Date(string='Start Date')
-    date_end = fields.Date(string='End Date')
+    date_order = fields.Datetime(string='Order Date', default=fields.Datetime.now, readonly=True)
+    
+    # Removed date_start and date_end from header - they're now on lines only
+    
     currency_id = fields.Many2one(
         'res.currency', string='Currency',
         default=lambda self: self.env.company.currency_id.id,
@@ -47,6 +50,11 @@ class BlanketOrderLine(models.Model):
     price_unit = fields.Float(string='Unit Price')
     tax_ids = fields.Many2many('account.tax', string='Taxes')
     currency_id = fields.Many2one(related='blanket_order_id.currency_id', store=True, readonly=True)
+
+    # Date fields are now on lines (moved from header)
+    start_date = fields.Date(string='Start Date', required=True, help="Start date for this order line")
+    end_date = fields.Date(string='End Date', required=True, help="End date for this order line")
+
     price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_amount', store=True)
     price_tax = fields.Monetary(string='Tax', compute='_compute_amount', store=True)
     price_total = fields.Monetary(string='Total', compute='_compute_amount', store=True)
@@ -67,3 +75,9 @@ class BlanketOrderLine(models.Model):
             line.price_subtotal = taxes['total_excluded']
             line.price_tax = taxes['total_included'] - taxes['total_excluded']
             line.price_total = taxes['total_included']
+
+    @api.constrains('start_date', 'end_date')
+    def _check_line_dates(self):
+        for line in self:
+            if line.start_date and line.end_date and line.start_date > line.end_date:
+                raise ValidationError("Line start date must be before line end date.")
