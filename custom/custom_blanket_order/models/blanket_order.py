@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 class BlanketOrder(models.Model):
     _name = 'blanket.order'
@@ -51,9 +51,7 @@ class BlanketOrderLine(models.Model):
     tax_ids = fields.Many2many('account.tax', string='Taxes')
     currency_id = fields.Many2one(related='blanket_order_id.currency_id', store=True, readonly=True)
 
-    # Date fields are now on lines (moved from header)
-    start_date = fields.Date(string='Start Date', required=True, help="Start date for this order line")
-    end_date = fields.Date(string='End Date', required=True, help="End date for this order line")
+    order_before_date = fields.Date(string='Order Before Date', required=True, help="Order before date for this order line")
 
     price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_amount', store=True)
     price_tax = fields.Monetary(string='Tax', compute='_compute_amount', store=True)
@@ -61,6 +59,8 @@ class BlanketOrderLine(models.Model):
 
     delivered_qty = fields.Float(string='Delivered Quantity', default=0.0)
     invoiced_qty = fields.Float(string='Invoiced Quantity', default=0.0)
+
+    is_reserved = fields.Boolean(string='Reserved', default=False)
 
     @api.depends('quantity', 'price_unit', 'tax_ids')
     def _compute_amount(self):
@@ -76,8 +76,42 @@ class BlanketOrderLine(models.Model):
             line.price_tax = taxes['total_included'] - taxes['total_excluded']
             line.price_total = taxes['total_included']
 
-    @api.constrains('start_date', 'end_date')
+    @api.constrains('order_before_date')
     def _check_line_dates(self):
         for line in self:
-            if line.start_date and line.end_date and line.start_date > line.end_date:
-                raise ValidationError("Line start date must be before line end date.")
+            if line.order_before_date and line.order_before_date < fields.Date.today():
+                raise ValidationError("Order before date must not be in the past.")
+
+    
+    def reserve_stock(self):
+        for line in self:
+            if not line.is_reserved and line.quantity > 0:
+                stock_move = self.env['stock.move'].create({
+                    'name': line.blanket_order_id.name,
+                    'product_id': line.product_id.id,
+                    'product_uom_qty': line.quantity,
+                    'product_uom': line.product_id.uom_id.id,
+                    'location_id': self.env.ref('stock.stock_location_stock').id,
+                    'location_dest_id': self.env.ref('stock.stock_location_customers').id,
+                    'partner_id': line.blanket_order_id.partner_id.id,
+                    'origin': line.blanket_order_id.name,
+                })
+                stock_move._action_confirm()
+                line.is_reserved = True
+
+    
+
+    @api.onchange('quantity')
+    @api.onchange('product_id')
+    def _onchange_quantity_reserve(self):
+        for line in self:
+            if not line.product_id or line.quantity <= 0 or line.is_reserved:
+                return
+
+            available_qty = line.product_id.qty_available
+            if line.quantity > available_qty:
+                raise UserError(f"Not enough stock for {line.product_id.display_name}. Available: {available_qty}")
+
+            line.reserve_stock()
+
+
