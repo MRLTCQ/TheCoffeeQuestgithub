@@ -1,7 +1,7 @@
 {
     'name': 'Blanket Order Custom',
     'version': '1.0',
-    'depends': ['sale', 'product'],
+    'depends': ['sale', 'product', 'stock', 'account', 'purchase'],
     'data': [
         'security/ir.model.access.csv',
         'views/blanket_order_menu.xml',

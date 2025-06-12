@@ -1,27 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- List view for Blanket Orders -->
-    <record id="view_blanket_order_list" model="ir.ui.view">
-        <field name="name">blanket.order.list</field>
-        <field name="model">blanket.order</field>
-        <field name="type">list</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="date_order"/>
-                <field name="amount_total"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Form view for Blanket Orders -->
+    <!-- Blanket Order Form View -->
     <record id="view_blanket_order_form" model="ir.ui.view">
         <field name="name">blanket.order.form</field>
         <field name="model">blanket.order</field>
-        <field name="type">form</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Blanket Order">
+                <header>
+                    <button name="action_confirm" string="Confirm and Reserve Stock"
+                            type="object" class="oe_highlight"
+                            modifiers="{'invisible': [['state', '!=', 'draft']]}"/>
+                    <button name="action_cancel" string="Cancel"
+                            type="object"
+                            modifiers="{'invisible': [['state', '!=', 'draft'], ['state', '!=', 'confirmed']]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -31,33 +24,35 @@
                     <group>
                         <group>
                             <field name="partner_id"/>
-                            <field name="date_order" readonly="1"/>
+                            <field name="date_order"/>
                         </group>
                         <group>
                             <field name="currency_id"/>
                         </group>
                     </group>
-                    
                     <notebook>
-                        <page string="Order Lines">
+                        <page string="Order Lines" name="order_lines">
                             <field name="order_line_ids">
                                 <list editable="bottom">
                                     <field name="product_id"/>
                                     <field name="description"/>
                                     <field name="quantity"/>
+                                    <field name="reserved_qty" readonly="1"/>
                                     <field name="price_unit"/>
                                     <field name="order_before_date"/>
                                     <field name="tax_ids" widget="many2many_tags"/>
                                     <field name="price_subtotal"/>
+                                    <button name="action_create_picking" string="Create Delivery"
+                                            type="object" icon="fa-truck"
+                                            modifiers="{'invisible': [['reserved_qty', '=', 0]]}"/>
                                 </list>
                             </field>
                         </page>
                     </notebook>
-                    
                     <group class="oe_subtotal_footer oe_right">
                         <field name="amount_untaxed"/>
                         <field name="amount_tax"/>
-                        <div class="oe_subtotal_footer_separator oe_inline">
+                        <div class="oe_subtotal_footer_separator oe_inline o_td_label">
                             <label for="amount_total"/>
                         </div>
                         <field name="amount_total" class="oe_subtotal_footer_separator"/>
@@ -67,23 +62,66 @@
         </field>
     </record>
 
-    <!-- Action for Blanket Orders -->
+    <!-- Blanket Order List View -->
+    <record id="view_blanket_order_tree" model="ir.ui.view">
+        <field name="name">blanket.order.list</field>
+        <field name="model">blanket.order</field>
+        <field name="arch" type="xml">
+            <list string="Blanket Orders">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date_order"/>
+                <field name="amount_total"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Blanket Order Line Form View -->
+    <record id="view_blanket_order_line_form" model="ir.ui.view">
+        <field name="name">blanket.order.line.form</field>
+        <field name="model">blanket.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Blanket Order Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="description"/>
+                            <field name="quantity"/>
+                            <field name="reserved_qty" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="price_unit"/>
+                            <field name="order_before_date"/>
+                            <field name="tax_ids" widget="many2many_tags"/>
+                            <field name="price_total"/>
+                        </group>
+                    </group>
+                    <group string="Stock Information">
+                        <field name="delivered_qty"/>
+                        <field name="invoiced_qty"/>
+                    </group>
+                    <group string="Actions">
+                        <button name="action_create_picking" string="Create Delivery"
+                                type="object" class="oe_highlight"
+                                modifiers="{'invisible': [['reserved_qty', '=', 0]]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
     <record id="action_blanket_order" model="ir.actions.act_window">
         <field name="name">Blanket Orders</field>
         <field name="res_model">blanket.order</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create your first blanket order
+                Create your first blanket order!
             </p>
         </field>
     </record>
-
-    <!-- Menu Item -->
-    <menuitem 
-        id="menu_blanket_order"
-        name="Blanket Orders"
-        action="action_blanket_order"
-        parent="sale.sale_menu_root"
-        sequence="10"/>
 </odoo>
