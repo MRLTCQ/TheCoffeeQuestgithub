@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Dummy action to force parent menu to display -->
+        <record id="action_product_reservation_dummy" model="ir.actions.act_window">
+            <field name="name">Reservation Tools</field>
+            <field name="res_model">product.reservation.detail</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[('id', '=', -1)]</field> <!-- shows empty list -->
+            <field name="context">{}</field>
+        </record>
+
+        <!-- Real action for reservation list -->
+        <record id="action_product_reservation_detail" model="ir.actions.act_window">
+            <field name="name">Product Reservations</field>
+            <field name="res_model">product.reservation.detail</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+        </record>
+
+        <!-- Parent menu under Inventory > Reporting with dummy action to force visibility -->
+        <menuitem id="menu_product_reservation_tools"
+          name="Reservation Tools"
+          parent="stock.menu_warehouse_report"
+          action="action_product_reservation_dummy"
+          groups="base.group_user"
+          sequence="50"/>
+
+        <menuitem id="menu_product_reservation_detail"
+                name="Product Reservations"
+                parent="menu_product_reservation_tools"
+                action="action_product_reservation_detail"
+                groups="base.group_user"
+                sequence="10"/>
+
+
+        <!-- List view definition -->
+        <record id="view_product_reservation_detail_list" model="ir.ui.view">
+            <field name="name">product.reservation.detail.list</field>
+            <field name="model">product.reservation.detail</field>
+            <field name="arch" type="xml">
+                <list string="Product Reservation Details">
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="quantity"/>
+                    <field name="reservation_type"/>
+                    <field name="reference"/>
+                    <field name="date"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>
