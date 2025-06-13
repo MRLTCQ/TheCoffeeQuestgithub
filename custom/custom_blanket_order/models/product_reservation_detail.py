@@ -1,4 +1,3 @@
-# models/product_reservation_detail.py
 from odoo import models, fields, tools
 
 class ProductReservationDetail(models.Model):

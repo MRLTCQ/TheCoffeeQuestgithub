@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data noupdate="0">
+  <data noupdate="0">
 
-        <!-- Dummy action to force parent menu to display -->
-        <record id="action_product_reservation_dummy" model="ir.actions.act_window">
-            <field name="name">Reservation Tools</field>
-            <field name="res_model">stock.move</field>
-            <field name="view_mode">list</field>
-            <field name="domain">[('id', '=', -1)]</field> <!-- shows empty list -->
-            <field name="context">{}</field>
-        </record>
+    <!-- Dummy action to keep parent visible -->
+    <record id="action_product_reservation_dummy" model="ir.actions.act_window">
+      <field name="name">Reservation Tools</field>
+      <field name="res_model">product.reservation.detail</field>
+      <field name="view_mode">list</field>
+      <field name="domain">[('id', '=', -1)]</field>
+      <field name="context">{}</field>
+    </record>
 
-        <!-- Real action for reservation list -->
-        <record id="action_product_reservation_detail" model="ir.actions.act_window">
-            <field name="name">Product Reservations</field>
-            <field name="res_model">stock.move</field>
-            <field name="view_mode">list</field>
-            <field name="context">{}</field>
-        </record>
+    <!-- Real action -->
+    <record id="action_product_reservation_detail" model="ir.actions.act_window">
+      <field name="name">Product Reservations</field>
+      <field name="res_model">product.reservation.detail</field>
+      <field name="view_mode">list</field>
+      <field name="context">{}</field>
+    </record>
 
-        <!-- Parent menu under Inventory > Reporting with dummy action to force visibility -->
-        <menuitem id="menu_product_reservation_tools"
-          name="Reservation Tools"
-          parent="stock.menu_warehouse_report"
-          action="action_product_reservation_dummy"
-          groups="base.group_user"
-          sequence="50"/>
+    <!-- Menu: Inventory > Reporting > Reservation Tools -->
+    <menuitem id="menu_product_reservation_tools"
+              name="Reservation Tools"
+              parent="stock.menu_warehouse_report"
+              action="action_product_reservation_dummy"
+              sequence="50"
+              groups="base.group_user"/>
 
-        <menuitem id="menu_product_reservation_detail"
-                name="Product Reservations"
-                parent="menu_product_reservation_tools"
-                action="action_product_reservation_detail"
-                groups="base.group_user"
-                sequence="10"/>
+    <!-- Submenu: Product Reservations -->
+    <menuitem id="menu_product_reservation_detail"
+              name="Product Reservations"
+              parent="menu_product_reservation_tools"
+              action="action_product_reservation_detail"
+              sequence="10"
+              groups="base.group_user"/>
 
+    <!-- Submenu: Coming Soon (just to prevent Odoo from collapsing parent menu) -->
+    <menuitem id="menu_product_reservation_placeholder"
+              name="Coming Soon"
+              parent="menu_product_reservation_tools"
+              sequence="20"
+              groups="base.group_user"/>
 
-        <!-- List view definition -->
-        <record id="view_product_reservation_detail_list" model="ir.ui.view">
-            <field name="name">product.reservation.detail.list</field>
-            <field name="model">product.reservation.detail</field>
-            <field name="arch" type="xml">
-                <list string="Product Reservation Details">
-                    <field name="product_id"/>
-                    <field name="location_id"/>
-                    <field name="quantity"/>
-                    <field name="reservation_type"/>
-                    <field name="reference"/>
-                    <field name="date"/>
-                </list>
-            </field>
-        </record>
+    <!-- List view -->
+    <record id="view_product_reservation_detail_list" model="ir.ui.view">
+      <field name="name">product.reservation.detail.list</field>
+      <field name="model">product.reservation.detail</field>
+      <field name="arch" type="xml">
+        <list string="Product Reservation Details">
+          <field name="product_id"/>
+          <field name="location_id"/>
+          <field name="quantity"/>
+          <field name="reservation_type"/>
+          <field name="reference"/>
+          <field name="date"/>
+        </list>
+      </field>
+    </record>
 
-    </data>
+  </data>
 </odoo>

@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_blanket_order,blanket.order,custom_blanket_order.model_blanket_order,,1,1,1,1
 access_blanket_order_line,blanket.order.line,custom_blanket_order.model_blanket_order_line,,1,1,1,1
+access_product_reservation_detail_user,access_product_reservation_detail_user,model_product_reservation_detail,base.group_user,1,0,0,0
