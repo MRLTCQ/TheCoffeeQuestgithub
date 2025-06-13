@@ -5,7 +5,7 @@
         <!-- Dummy action to force parent menu to display -->
         <record id="action_product_reservation_dummy" model="ir.actions.act_window">
             <field name="name">Reservation Tools</field>
-            <field name="res_model">product.reservation.detail</field>
+            <field name="res_model">stock.move</field>
             <field name="view_mode">list</field>
             <field name="domain">[('id', '=', -1)]</field> <!-- shows empty list -->
             <field name="context">{}</field>
@@ -14,7 +14,7 @@
         <!-- Real action for reservation list -->
         <record id="action_product_reservation_detail" model="ir.actions.act_window">
             <field name="name">Product Reservations</field>
-            <field name="res_model">product.reservation.detail</field>
+            <field name="res_model">stock.move</field>
             <field name="view_mode">list</field>
             <field name="context">{}</field>
         </record>
