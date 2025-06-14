@@ -128,18 +128,16 @@ class BlanketOrderLine(models.Model):
                 continue  # Already fully reserved
                 
             qty_to_reserve = line.quantity - line.reserved_qty
-            
-            # Check availability first
+
             if line.product_id.qty_available < qty_to_reserve:
                 raise UserError(
                     f"Cannot reserve {qty_to_reserve} units of {line.product_id.display_name}. "
                     f"Only {line.product_id.qty_available} units available."
                 )
 
-            # Create stock move for reservation
             stock_location = self.env.ref('stock.stock_location_stock')
             customer_location = self.env.ref('stock.stock_location_customers')
-            
+
             move_vals = {
                 'name': f"Blanket Order Reservation: {line.blanket_order_id.name}",
                 'product_id': line.product_id.id,
@@ -148,19 +146,19 @@ class BlanketOrderLine(models.Model):
                 'location_id': stock_location.id,
                 'location_dest_id': customer_location.id,
                 'partner_id': line.blanket_order_id.partner_id.id,
-                'origin': line.blanket_order_id.name,
                 'blanket_order_line_id': line.id,
+                'origin': line.blanket_order_id.name if line.blanket_order_id.name and line.blanket_order_id.name != 'New' else f"Blanket Line {line.id}",
                 'state': 'draft',
             }
-            
+
             move = self.env['stock.move'].create(move_vals)
             move._action_confirm()
             move._action_assign()
-            
+
             if move.state == 'assigned':
                 line.reserved_qty += qty_to_reserve
             else:
-                move.unlink()  # Remove the move if it couldn't be assigned
+                move.unlink()
                 raise UserError(
                     f"Could not reserve {qty_to_reserve} units of {line.product_id.display_name}. "
                     f"Stock may not be available."
