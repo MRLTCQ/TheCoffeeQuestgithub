@@ -147,7 +147,7 @@ class BlanketOrderLine(models.Model):
                 'location_dest_id': customer_location.id,
                 'partner_id': line.blanket_order_id.partner_id.id,
                 'blanket_order_line_id': line.id,
-                'origin': line.blanket_order_id.name if line.blanket_order_id.name and line.blanket_order_id.name != 'New' else f"Blanket Line {line.id}",
+                'origin': line.blanket_order_id.name if line.blanket_order_id.name != 'New' else f"Blanket Line {line.id}",
                 'state': 'draft',
             }
 
