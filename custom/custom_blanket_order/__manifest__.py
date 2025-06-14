@@ -9,6 +9,12 @@
         'views/product_reservation_detail_views.xml',
         'data/sequence.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'custom_blanket_order/static/src/js/forecast_graph_patch.js',
+        ],
+    },
+
     'license': 'LGPL-3', 
     'installable': True,
     'application': True,
