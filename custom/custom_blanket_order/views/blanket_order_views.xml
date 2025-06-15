@@ -45,6 +45,9 @@
                                     <button name="action_create_picking" string="Create Delivery"
                                             type="object" icon="fa-truck"
                                             modifiers="{'invisible': [['reserved_qty', '=', 0]]}"/>
+                                    <button name="action_open_partial_convert_wizard" string="Partial SO"
+                                            type="object" icon="fa-exchange"
+                                            modifiers="{'invisible': [['reserved_qty', '=', 0]]}"/>
                                 </list>
                             </field>
                         </page>
@@ -107,6 +110,11 @@
                         <button name="action_create_picking" string="Create Delivery"
                                 type="object" class="oe_highlight"
                                 modifiers="{'invisible': [['reserved_qty', '=', 0]]}"/>
+                        <button name="action_open_partial_convert_wizard"
+                                string="Partial to Sales Order"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-exchange"/>
                     </group>
                 </sheet>
             </form>

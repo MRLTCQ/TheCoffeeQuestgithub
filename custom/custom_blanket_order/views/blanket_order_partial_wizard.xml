@@ -1,0 +1,21 @@
+<odoo>
+  <record id="view_blanket_order_partial_wizard_form" model="ir.ui.view">
+    <field name="name">blanket.order.line.partial.wizard.form</field>
+    <field name="model">blanket.order.line.partial.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Partial Delivery">
+        <group>
+          <field name="product_id"/>
+          <field name="available_qty"/>
+          <field name="already_delivered"/>
+          <field name="partial_qty"/>
+          <field name="delivery_date"/>
+        </group>
+        <footer>
+          <button name="action_create_sales_order" type="object" string="Create Sales Order" class="btn-primary"/>
+          <button string="Cancel" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

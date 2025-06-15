@@ -318,3 +318,17 @@ class BlanketOrderLine(models.Model):
                 'view_mode': 'form',
                 'target': 'current',
             }
+        
+    def action_open_partial_convert_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Partial Conversion',
+            'res_model': 'blanket.order.line.partial.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_blanket_order_line_id': self.id,
+            },
+        }
+
